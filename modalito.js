@@ -1,66 +1,77 @@
-// jQuery Plugin Boilerplate
-// A boilerplate for jumpstarting jQuery plugins development
-// version 1.1, May 14th, 2011
-// by Stefan Gabos
+/***
+* Plugin para ventana modal con jqery
+* Version 0.1
+* By @erufenix
+***/
 
 ;(function($) {
 
     $.modalito = function(element, options) {
 
         var defaults = {
-            show:     false,
-            backdrop: true,
-            ulr : '',
-            onFoo: function() {}
+            show          : false,
+            backdrop      : true,
+            url           : '',
+            iframe        : false,
+            width         : 560,
+            heightFrame   : 500
         }
-        
+
+        var plugin = this;
+
+        plugin.settings = {}
+
         var tmpl = '<div class="close"></div>\n'+
                       '<div class="content">\n'+
                    '</div>\n';
 
-        var plugin = this;
-        var $backdrop = null;
-
-        plugin.settings = {}
-
-        var $element = $(element),
-             element = element;                
-        plugin.init = function() {
+        var init = function() {
             plugin.settings = $.extend({}, defaults, options);
-            plugin.build();
+            plugin.element = element;
+            $element = plugin.element;
+            build();            
+            // code goes here
         }
 
         plugin.foo_public_method = function() {
             // code goes here
         }
-        
-        plugin.build = function(){
-             //element.html(tmpl);
-             if(plugin.settings.backdrop){
+
+        var show,build = function() {
+            if(plugin.settings.backdrop){
                 if(window.parent.document.body){
                     $backdrop = $('<div class="modalito-backdrop"/>').appendTo(window.parent.document.body)
                 }
                 else{   
                     $backdrop = $('<div class="modalito-backdrop"/>').appendTo(window.parent.document.body)
-                }
-                console.log($backdrop);
+                }                
              }             
              $element.html(tmpl);
              $element.removeClass("mhide").addClass("modalito").addClass("mshow");
+             if(plugin.settings.url != ''){
+                $("<iframe />", {
+                    id : 'frameContent',
+                    name : 'frameContent',
+                    scrolling : 'no',
+                    frameborder : 0,
+                    width : '100%',
+                    height : plugin.settings.heightFrame,
+                    src : plugin.settings.url
+                }).appendTo($element.find(".content"));       
+             }
+
+             $element.on('click', $(".close"), function(event) {
+                event.preventDefault();
+                destroy();
+             }); 
         }
-        
-        plugin.init(); 
 
-    }
+        var hide,destroy = function(){            
+            $element.removeClass("mshow").addClass("modalito").addClass("mhide");
+            $backdrop.remove();
+        }
 
-    $.fn.modalito = function(options) {
-
-        return this.each(function() {
-            if (undefined == $(this).data('modalito')) {
-                var plugin = new $.modalito(this, options);
-                $(this).data('modalito', plugin);
-            }
-        });
+        init();
 
     }
 
