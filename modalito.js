@@ -2,6 +2,7 @@
 * Plugin para ventana modal con jqery
 * Version 0.1
 * By @erufenix
+* Uso ver README.md en https://github.com/erufenix/modalito/blob/master/README.md
 ***/
 
 ;(function($) {
@@ -46,7 +47,9 @@
                     $backdrop = $('<div class="modalito-backdrop"/>').appendTo(window.parent.document.body)
                 }                
              }             
-             $element.html(tmpl);
+             $element.width(plugin.settings.width);
+             $element.css("margin-left",(plugin.settings.width/2)*-1);
+             $element.html(tmpl);             
              $element.removeClass("mhide").addClass("modalito").addClass("mshow");
              if(plugin.settings.url != ''){
                 $("<iframe />", {
