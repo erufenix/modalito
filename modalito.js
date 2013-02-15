@@ -2,7 +2,6 @@
 * Plugin para ventana modal con jqery
 * Version 0.1
 * By @erufenix
-* Uso ver README.md en https://github.com/erufenix/modalito/blob/master/README.md
 ***/
 
 ;(function($) {
@@ -13,9 +12,10 @@
             show          : false,
             backdrop      : true,
             url           : '',
-            iframe        : false,
+            result        : '',
             width         : 560,
-            heightFrame   : 500
+            heightFrame   : 500,
+            eschide       : false
         }
 
         var plugin = this;
@@ -44,7 +44,7 @@
                     $backdrop = $('<div class="modalito-backdrop"/>').appendTo(window.parent.document.body)
                 }
                 else{   
-                    $backdrop = $('<div class="modalito-backdrop"/>').appendTo(window.parent.document.body)
+                    $backdrop = $('<div class="modalito-backdrop"/>').appendTo(window.body)
                 }                
              }             
              $element.width(plugin.settings.width);
@@ -52,21 +52,39 @@
              $element.html(tmpl);             
              $element.removeClass("mhide").addClass("modalito").addClass("mshow");
              if(plugin.settings.url != ''){
-                $("<iframe />", {
-                    id : 'frameContent',
-                    name : 'frameContent',
-                    scrolling : 'no',
-                    frameborder : 0,
-                    width : '100%',
-                    height : plugin.settings.heightFrame,
-                    src : plugin.settings.url
-                }).appendTo($element.find(".content"));       
+                switch(plugin.settings.result){
+                    case 'iframe':
+                         $("<iframe />", {
+                            id          : 'frameContent',
+                            name        : 'frameContent',
+                            scrolling   : 'no',
+                            frameborder : 0,
+                            width       : '100%',
+                            height      : plugin.settings.heightFrame,
+                            src         : plugin.settings.url
+                         }).appendTo($element.find(".content"));       
+                    break; 
+                    case 'ajax':
+                    break;
+                         $element.find(".content").html("Ups no se puede mostrar el contenido");
+                    default:                    
+                }
              }
 
              $element.on('click', $(".close"), function(event) {
                 event.preventDefault();
                 destroy();
              }); 
+              
+             if(plugin.settings.eschide){
+                $(document).on('keyup',function(event) {
+                    event.preventDefault();
+                    if(event.which == 27){
+                        destroy();
+                    }
+                });
+             }              
+
         }
 
         var hide,destroy = function(){            
